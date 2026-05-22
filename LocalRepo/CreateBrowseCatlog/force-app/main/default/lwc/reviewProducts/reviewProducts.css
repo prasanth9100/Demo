@@ -1,0 +1,209 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+}
+
+.content {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 16px;
+}
+
+.table-container {
+    width: 100%;
+}
+
+/* HEADER — 6 columns now (expand-arrow | product | price | qty | total | delete) */
+.thead {
+    display: grid;
+    grid-template-columns: 40px 2fr 1fr 1fr 1fr 60px;
+    font-weight: 600;
+    padding: 12px;
+    background: #f4f6f9;
+    border-bottom: 1px solid #ddd;
+    position: sticky;
+    top: 0;
+    z-index: 5;
+}
+
+/* BASE ROW */
+.row {
+    display: grid;
+    grid-template-columns: 40px 2fr 1fr 1fr 1fr 60px;
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+    align-items: center;
+}
+
+/* Error row */
+.row-error {
+    background-color: rgba(194, 57, 52, 0.08);
+    border-left: 3px solid #c23934;
+}
+
+/* Bundle summary row */
+.row-bundle {
+    background: #f0f4ff;
+    font-weight: 600;
+    cursor: default;
+}
+
+/* Expanded child row (indented, lighter) */
+.row-child {
+    background: #fafbfc;
+    border-bottom: 1px solid #f0f0f0;
+    padding-left: 24px;
+}
+
+/* Expand arrow column */
+.expand-col {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* PRODUCT CELL */
+.product-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* IMAGE */
+.img {
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.img-placeholder {
+    background: #e8edf3;
+}
+
+/* Child rows use a small indent spacer instead of an image */
+.img-child-indent {
+    width: 24px;
+    height: 1px;
+    flex-shrink: 0;
+}
+
+/* PRODUCT INFO */
+.product-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.product-name {
+    font-size: 13px;
+    color: #181818;
+}
+
+.bundle-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1a3c6e;
+}
+
+/* "Bundle" tag pill */
+.bundle-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    color: #0070d2;
+    background: #e0efff;
+    border-radius: 4px;
+    padding: 1px 6px;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+}
+
+/* Child row text */
+.child-text {
+    font-size: 12px;
+    color: #555;
+}
+
+/* Error badge */
+.error-badge {
+    display: inline-block;
+    margin-top: 2px;
+    font-size: 11px;
+    color: #c23934;
+    font-weight: 500;
+}
+
+/* QTY */
+.qty {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* SUMMARY */
+.summary {
+    text-align: right;
+    padding: 12px;
+    font-weight: 600;
+    font-size: 14px;
+    border-top: 2px solid #dddbda;
+    margin-top: 8px;
+}
+
+/* SUB-BUNDLE header row (inside expanded top-bundle) */
+.row-subbundle {
+    background: #eaf0fb;
+    padding-left: 40px;
+}
+
+/* Deep child row (inside expanded sub-bundle) */
+.row-deep-child {
+    background: #f7f9fc;
+    border-bottom: 1px solid #eee;
+    padding-left: 64px;
+}
+
+/* Sub-bundle label */
+.subbundle-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #2e5e9e;
+}
+
+/* Sub-bundle tag pill */
+.subbundle-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    color: #2e5e9e;
+    background: #d4e4f7;
+    border-radius: 4px;
+    padding: 1px 6px;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+}
+
+/* Deep child text */
+.deep-child-text {
+    font-size: 12px;
+    color: #777;
+}
+
+/* Deeper indent spacer for deep children */
+.img-deep-indent {
+    width: 48px;
+    height: 1px;
+    flex-shrink: 0;
+}

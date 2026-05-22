@@ -1,0 +1,26 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+}
+
+/* CONTAINER */
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* CONTENT */
+.content {
+    flex: 1;
+    padding: 20px;
+}
+
+/* DESCRIPTION */
+.desc {
+    font-size: 13px;
+    color: #444;
+    margin-bottom: 16px;
+}

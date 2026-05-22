@@ -1,0 +1,173 @@
+<template>
+    <div class="container">
+        <div class="content">
+            <div class="table-container">
+
+                <!-- TABLE HEADER -->
+                <div class="thead">
+                    <span></span>
+                    <span>Product</span>
+                    <span>Price</span>
+                    <span>Quantity</span>
+                    <span>Total</span>
+                    <span></span>
+                </div>
+
+                <!-- ROWS -->
+                <template for:each={displayRows} for:item="row">
+                    <div key={row.key} class={row.rowClass}>
+
+                        <!-- COL 1: EXPAND ARROW -->
+                        <div class="expand-col">
+                            <template if:true={row.isBundleGroup}>
+                                <lightning-button-icon
+                                    icon-name={row.expandIcon}
+                                    data-expkey={row.bundleGroupId}
+                                    onclick={handleToggleExpand}
+                                    variant="bare"
+                                    size="small"
+                                    alternative-text="Expand">
+                                </lightning-button-icon>
+                            </template>
+                            <template if:true={row.isSubBundle}>
+                                <lightning-button-icon
+                                    icon-name={row.subExpandIcon}
+                                    data-expkey={row.subExpKey}
+                                    onclick={handleToggleExpand}
+                                    variant="bare"
+                                    size="small"
+                                    alternative-text="Expand sub-bundle">
+                                </lightning-button-icon>
+                            </template>
+                        </div>
+
+                        <!-- COL 2: PRODUCT NAME / IMAGE -->
+                        <div class="product-cell">
+
+                            <!-- Image: only top-level rows (not child rows) -->
+                            <template if:true={row.isBundleGroup}>
+                                <div class="img img-placeholder"></div>
+                            </template>
+                            <template if:true={row.isSubBundle}>
+                                <div class="img img-child-indent"></div>
+                            </template>
+                            <template if:true={row.isDeepChild}>
+                                <div class="img img-deep-indent"></div>
+                            </template>
+                            <template if:true={row.isStandalone}>
+                                <template if:true={row.displayUrl}>
+                                    <img src={row.displayUrl} class="img" onerror={handleImageError} />
+                                </template>
+                                <template if:false={row.displayUrl}>
+                                    <div class="img img-placeholder"></div>
+                                </template>
+                            </template>
+                            <template if:true={row.isDirectChild}>
+                                <div class="img img-child-indent"></div>
+                            </template>
+
+                            <div class="product-info">
+                                <span class={row.nameClass}>{row.name}</span>
+                                <template if:true={row.isBundleGroup}>
+                                    <span class="bundle-tag">Bundle</span>
+                                </template>
+                                <template if:true={row.isSubBundle}>
+                                    <span class="subbundle-tag">Bundle</span>
+                                </template>
+                                <template if:true={row.hasError}>
+                                    <span class="error-badge">No pricebook entry -- remove to continue</span>
+                                </template>
+                            </div>
+                        </div>
+
+                        <!-- COL 3: PRICE -->
+                        <span class={row.priceClass}>Rs {row.price}</span>
+
+                        <!-- COL 4: QTY -->
+                        <!-- Bundle group row: +/- scales entire group -->
+                        <template if:true={row.isBundleGroup}>
+                            <div class="qty">
+                                <lightning-button-icon
+                                    icon-name="utility:dash"
+                                    data-id={row.bundleGroupId}
+                                    data-group={row.bundleGroupId}
+                                    onclick={decrease}
+                                    size="small">
+                                </lightning-button-icon>
+                                <span>{row.quantity}</span>
+                                <lightning-button-icon
+                                    icon-name="utility:add"
+                                    data-id={row.bundleGroupId}
+                                    data-group={row.bundleGroupId}
+                                    onclick={increase}
+                                    size="small">
+                                </lightning-button-icon>
+                            </div>
+                        </template>
+                        <!-- Sub-bundle header: display only, no qty control -->
+                        <template if:true={row.isSubBundle}>
+                            <span class="child-text">--</span>
+                        </template>
+                        <!-- All other rows (standalone, direct child, deep child): individual +/- -->
+                        <template if:true={row.hasQtyControl}>
+                            <div class="qty">
+                                <lightning-button-icon
+                                    icon-name="utility:dash"
+                                    data-id={row.productId}
+                                    onclick={decrease}
+                                    size="small">
+                                </lightning-button-icon>
+                                <span>{row.quantity}</span>
+                                <lightning-button-icon
+                                    icon-name="utility:add"
+                                    data-id={row.productId}
+                                    onclick={increase}
+                                    size="small">
+                                </lightning-button-icon>
+                            </div>
+                        </template>
+
+                        <!-- COL 5: TOTAL -->
+                        <span class={row.totalClass}>Rs {row.total}</span>
+
+                        <!-- COL 6: DELETE -->
+                        <!-- Bundle group: delete removes entire group -->
+                        <template if:true={row.isBundleGroup}>
+                            <lightning-button-icon
+                                icon-name="utility:delete"
+                                data-id={row.bundleGroupId}
+                                data-group={row.bundleGroupId}
+                                data-isgroup="true"
+                                onclick={handleRemove}
+                                variant="bare"
+                                alternative-text="Remove Bundle">
+                            </lightning-button-icon>
+                        </template>
+                        <!-- Sub-bundle header: no delete button (delete individual children) -->
+                        <template if:true={row.isSubBundle}>
+                            <span></span>
+                        </template>
+                        <!-- Standalone / direct child / deep child: delete just that item -->
+                        <template if:true={row.hasQtyControl}>
+                            <lightning-button-icon
+                                icon-name="utility:delete"
+                                data-id={row.productId}
+                                data-group={row.bundleGroupId}
+                                data-isgroup="false"
+                                onclick={handleRemove}
+                                variant="bare"
+                                alternative-text="Remove">
+                            </lightning-button-icon>
+                        </template>
+
+                    </div>
+                </template>
+
+            </div>
+
+            <div class="summary">
+                Grand Total: Rs {grandTotal}
+            </div>
+        </div>
+    </div>
+</template>

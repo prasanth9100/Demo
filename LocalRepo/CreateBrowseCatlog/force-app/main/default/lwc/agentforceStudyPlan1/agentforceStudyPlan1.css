@@ -1,0 +1,204 @@
+/* Agentforce Study Plan LWC — CSS */
+:host { display:block; font-family:'Salesforce Sans',Arial,sans-serif; }
+
+/* ── Wrapper ── */
+.sp-wrap { max-width:960px; margin:0 auto; padding:1.25rem; background:#f3f2f2; min-height:100vh; }
+
+/* ── Header ── */
+.sp-header { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap;
+  gap:1rem; background:#032d60; padding:1.25rem 1.5rem; border-radius:8px; margin-bottom:1rem; }
+.sp-header__left { display:flex; align-items:center; gap:.875rem; }
+.sp-header__icon { background:rgba(255,255,255,.15); border-radius:8px; padding:8px;
+  display:flex; align-items:center; justify-content:center; }
+.sp-header__title { font-size:19px; font-weight:700; color:#fff; margin:0; line-height:1.3; }
+.sp-header__sub { font-size:12px; color:rgba(255,255,255,.75); margin:2px 0 0; }
+.sp-header__stats { display:flex; gap:.75rem; }
+.sp-stat { background:rgba(255,255,255,.15); border-radius:20px; padding:5px 14px; text-align:center; }
+.sp-stat--blue { background:#0070d2; }
+.sp-stat__num { font-size:17px; font-weight:700; color:#fff; display:block; line-height:1; }
+.sp-stat__lbl { font-size:11px; color:rgba(255,255,255,.8); display:block; margin-top:1px; }
+
+/* ── Progress ── */
+.sp-progress { margin-bottom:1rem; }
+.sp-progress__track { display:flex; gap:4px; }
+.sp-seg { flex:1; height:7px; border-radius:4px; background:#dddbda; cursor:pointer; transition:background .2s; }
+.sp-seg:hover { filter:brightness(.9); }
+.sp-seg--done   { background:#2e844a; }
+.sp-seg--active { background:#0070d2; }
+.sp-progress__labels { display:flex; justify-content:space-between; margin-top:5px;
+  font-size:11px; color:#706e6b; }
+
+/* ── Day tabs ── */
+.sp-tabs { display:flex; gap:4px; flex-wrap:wrap; background:#fff; padding:7px;
+  border-radius:8px; border:1px solid #dddbda; margin-bottom:1rem; }
+.sp-tab { padding:5px 11px; border-radius:4px; border:1px solid #dddbda; background:#f3f2f2;
+  font-size:12px; font-weight:500; color:#3e3e3c; cursor:pointer; transition:all .15s;
+  display:inline-flex; align-items:center; gap:4px; }
+.sp-tab:hover { background:#e5e5e5; }
+.sp-tab--active { background:#032d60; color:#fff; border-color:#032d60; }
+.sp-tab__check { font-size:10px; background:#2e844a; color:#fff; border-radius:50%;
+  width:14px; height:14px; display:inline-flex; align-items:center; justify-content:center; }
+
+/* ── Day Card ── */
+.sp-card { background:#fff; border:1px solid #dddbda; border-radius:8px;
+  overflow:hidden; box-shadow:0 2px 4px rgba(0,0,0,.06); }
+
+.sp-card__head { display:flex; align-items:flex-start; gap:.875rem;
+  padding:1.25rem; border-bottom:1px solid rgba(0,0,0,.08); flex-wrap:wrap; }
+.sp-card__badge { width:46px; height:46px; border-radius:50%; display:flex;
+  align-items:center; justify-content:center; font-size:13px; font-weight:700;
+  flex-shrink:0; letter-spacing:.02em; }
+.sp-card__meta { flex:1; min-width:200px; }
+.sp-card__title { font-size:16px; font-weight:700; color:#032d60; margin:0 0 3px; line-height:1.3; }
+.sp-card__sub { font-size:12px; color:#706e6b; margin:0 0 9px; line-height:1.5; }
+.sp-chips { display:flex; gap:5px; flex-wrap:wrap; }
+.sp-chip { padding:2px 9px; border-radius:12px; font-size:11px; font-weight:500; }
+.sp-chip--time  { background:#fef0c7; color:#7d4706; }
+.sp-chip--exam  { background:#ece7ff; color:#4a0b92; }
+.sp-chip--final { background:#e8f4e8; color:#1a5c1a; }
+
+/* Complete button */
+.sp-btn { padding:7px 14px; border-radius:5px; border:1px solid #dddbda;
+  font-size:12px; font-weight:500; cursor:pointer; transition:all .15s; }
+.sp-btn--mark   { background:#fff; color:#3e3e3c; }
+.sp-btn--mark:hover { background:#f3f2f2; }
+.sp-btn--done   { background:#2e844a; color:#fff; border-color:#2e844a; }
+.sp-btn--outline { background:#fff; color:#0070d2; border-color:#0070d2; }
+.sp-btn--outline:hover { background:#e8f4fe; }
+.sp-btn--primary { background:#0070d2; color:#fff; border-color:#0070d2; }
+.sp-btn--primary:hover { background:#005ba3; }
+.sp-btn--success { background:#2e844a; color:#fff; border-color:#2e844a; }
+.sp-btn--success:hover { background:#216636; }
+
+/* ── Inner section tabs ── */
+.sp-inner-tabs { display:flex; gap:0; border-bottom:1px solid #e5e5e5; background:#fafaf9; }
+.sp-itab { flex:1; padding:10px 4px; background:none; border:none; border-bottom:3px solid transparent;
+  font-size:12px; font-weight:500; color:#706e6b; cursor:pointer; transition:all .15s;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.sp-itab:hover { background:#f3f2f2; color:#3e3e3c; }
+.sp-itab--active { color:#0070d2; border-bottom-color:#0070d2; background:#fff; }
+
+/* ── Section content ── */
+.sp-section { padding:1.25rem; }
+
+/* Topics */
+.sp-topic-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(260px,1fr)); gap:8px; }
+.sp-topic { display:flex; align-items:flex-start; gap:9px; padding:9px 11px;
+  background:#f8f8f8; border:1px solid #e5e5e5; border-radius:6px;
+  cursor:pointer; transition:all .15s; }
+.sp-topic:hover { background:#eef5fe; border-color:#0070d2; transform:translateY(-1px); }
+.sp-topic--active { background:#eef5fe; border-color:#0070d2; border-left:3px solid #0070d2; }
+.sp-topic__dot { width:7px; height:7px; border-radius:50%; margin-top:5px; flex-shrink:0; }
+.sp-topic__body { flex:1; }
+.sp-topic__title { font-size:13px; font-weight:600; color:#0070d2; line-height:1.4; }
+.sp-topic__sub { font-size:11px; color:#706e6b; margin-top:2px; line-height:1.4; }
+
+/* Detail panel */
+.sp-detail { margin-top:12px; border:1px solid #0070d2; border-radius:6px; overflow:hidden; }
+.sp-detail__head { display:flex; align-items:center; justify-content:space-between;
+  padding:9px 14px; }
+.sp-detail__heading { font-size:13px; font-weight:600; }
+.sp-detail__close { background:none; border:none; color:#fff; cursor:pointer;
+  font-size:14px; padding:0 4px; line-height:1; }
+.sp-detail__body { padding:14px; background:#f8fbff; display:flex; flex-direction:column; gap:11px; }
+.sp-detail__block { border-left:3px solid #0070d2; padding-left:11px; }
+.sp-detail__label { font-size:11px; font-weight:700; color:#032d60; margin-bottom:3px;
+  text-transform:uppercase; letter-spacing:.05em; }
+.sp-detail__text { font-size:13px; color:#3e3e3c; line-height:1.6; margin:0; }
+.sp-doc-btn { display:inline-flex; align-items:center; gap:6px; margin-top:4px;
+  padding:6px 12px; background:#032d60; color:#fff; border:none; border-radius:4px;
+  font-size:12px; font-weight:500; cursor:pointer; transition:background .15s; }
+.sp-doc-btn:hover { background:#0070d2; }
+
+/* Use Case */
+.sp-uc-box { background:#effcf6; border:1px solid #91db8b; border-radius:7px; padding:14px; }
+.sp-uc-label { font-size:11px; font-weight:700; text-transform:uppercase;
+  letter-spacing:.07em; color:#2e844a; margin-bottom:8px; }
+.sp-uc-intro { font-size:13px; font-weight:600; color:#1a3c1a; margin:0 0 12px; line-height:1.5; }
+.sp-uc-steps { display:flex; flex-direction:column; gap:7px; }
+.sp-uc-step { display:flex; align-items:flex-start; gap:9px; }
+.sp-uc-step__num { width:22px; height:22px; border-radius:50%; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700;
+  color:#fff; line-height:1; }
+.sp-uc-step__txt { font-size:13px; color:#3e3e3c; line-height:1.5; padding-top:2px; }
+
+/* Trailheads */
+.sp-th-note { font-size:12px; color:#706e6b; background:#f8f8f8; border-radius:5px;
+  padding:7px 11px; margin-bottom:12px; }
+.sp-th-list { display:flex; flex-direction:column; gap:8px; margin-bottom:1.5rem; }
+.sp-th-card { display:flex; align-items:center; gap:11px; padding:10px 13px;
+  background:#fff; border:1px solid #dddbda; border-radius:6px;
+  cursor:pointer; transition:all .15s; }
+.sp-th-card:hover { background:#f0f7ff; border-color:#0070d2;
+  box-shadow:0 2px 6px rgba(0,112,210,.12); transform:translateX(3px); }
+.sp-th-card__icon { width:34px; height:34px; background:#e8f4fe; border-radius:5px;
+  display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.sp-th-card__info { flex:1; }
+.sp-th-card__name { font-size:13px; font-weight:600; color:#0070d2; line-height:1.4; }
+.sp-th-card__meta { display:flex; align-items:center; gap:7px; margin-top:2px; }
+.sp-th-card__domain { font-size:11px; color:#a0a0a0; }
+.sp-badge { font-size:11px; font-weight:600; padding:1px 8px; border-radius:10px; }
+.sp-badge--purple { background:#ece7ff; color:#4a0b92; }
+
+/* Help docs section */
+.sp-help-section { margin-top:.5rem; }
+.sp-help-title { font-size:12px; font-weight:700; color:#032d60; margin-bottom:8px;
+  text-transform:uppercase; letter-spacing:.05em; }
+.sp-help-list { display:flex; flex-direction:column; gap:6px; }
+.sp-help-card { display:flex; align-items:center; gap:10px; padding:9px 13px;
+  background:#fff; border:1px solid #e5e5e5; border-radius:6px;
+  cursor:pointer; transition:all .15s; }
+.sp-help-card:hover { background:#f0f7ff; border-color:#0070d2; transform:translateX(2px); }
+.sp-help-card__left { flex-shrink:0; }
+.sp-help-card__body { flex:1; }
+.sp-help-card__title { font-size:13px; font-weight:500; color:#032d60; }
+.sp-help-card__url { font-size:10px; color:#a0a0a0; margin-top:1px;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:420px; }
+
+/* ── Notes / Document ── */
+.sp-notes-wrap { display:flex; flex-direction:column; gap:1rem; }
+.sp-notes-header { display:flex; align-items:center; justify-content:space-between;
+  flex-wrap:wrap; gap:.5rem; }
+.sp-notes-title { font-size:14px; font-weight:700; color:#032d60; }
+.sp-notes-actions { display:flex; align-items:center; gap:.5rem; }
+.sp-saved-badge { font-size:12px; color:#2e844a; font-weight:600; }
+.sp-notes-fields { display:flex; flex-direction:column; gap:.875rem; }
+.sp-field { display:flex; flex-direction:column; gap:4px; }
+.sp-field__label { font-size:12px; font-weight:600; color:#3e3e3c; }
+.sp-textarea { width:100%; padding:9px 11px; border:1px solid #dddbda;
+  border-radius:5px; font-size:13px; color:#3e3e3c; font-family:inherit;
+  resize:vertical; min-height:90px; transition:border .15s; box-sizing:border-box; }
+.sp-textarea--sm { min-height:65px; }
+.sp-textarea:focus { outline:none; border-color:#0070d2;
+  box-shadow:0 0 0 2px rgba(0,112,210,.15); }
+.sp-stars { display:flex; align-items:center; gap:4px; }
+.sp-star { background:none; border:none; font-size:24px; color:#dddbda;
+  cursor:pointer; padding:0 2px; transition:color .1s; line-height:1; }
+.sp-star:hover, .sp-star--on { color:#f7a600; }
+.sp-stars__lbl { font-size:12px; color:#706e6b; margin-left:8px; }
+
+/* Study Document */
+.sp-doc-ref { background:#fafaf9; border:1px solid #e5e5e5; border-radius:7px; overflow:hidden; }
+.sp-doc-ref__title { padding:10px 14px; background:#032d60; color:#fff;
+  font-size:13px; font-weight:600; }
+.sp-doc-ref__body { padding:14px; display:flex; flex-direction:column; gap:14px; }
+.sp-doc-sec { }
+.sp-doc-sec__heading { font-size:13px; font-weight:700; padding-left:10px; padding-bottom:4px;
+  margin-bottom:6px; }
+.sp-doc-sec__text { font-size:13px; color:#3e3e3c; line-height:1.65; margin:0 0 6px; }
+.sp-doc-sec__bullets { margin:4px 0 0 0; padding-left:18px; }
+.sp-doc-sec__bullets li { font-size:13px; color:#3e3e3c; line-height:1.6; margin-bottom:3px; }
+
+/* ── Footer ── */
+.sp-footer { display:flex; align-items:center; justify-content:space-between;
+  padding:.875rem 1.25rem; background:#f8f8f8; border-top:1px solid #e5e5e5; flex-wrap:wrap; gap:.5rem; }
+.sp-footer__ctr { font-size:12px; color:#706e6b; font-weight:500; }
+
+/* ── Responsive ── */
+@media (max-width:600px) {
+  .sp-wrap { padding:.75rem; }
+  .sp-header { flex-direction:column; }
+  .sp-topic-grid { grid-template-columns:1fr; }
+  .sp-itab { font-size:11px; }
+  .sp-card__head { flex-direction:column; }
+}

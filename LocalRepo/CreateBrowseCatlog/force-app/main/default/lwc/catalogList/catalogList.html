@@ -1,0 +1,55 @@
+<template>
+
+    <div class="container">
+
+        <!-- SEARCH BAR
+        <div class="toolbar">
+            <lightning-input
+                type="search"
+                placeholder="Search catalogs..."
+                onchange={handleSearch}>
+            </lightning-input>
+
+            <p class="meta">
+                {totalCount} items • {selectedCount} selected
+            </p>
+        </div> -->
+        <!-- 🔥 TOOLBAR -->
+<div class="toolbar">
+
+    <!-- LEFT SIDE (META) -->
+    <div class="left-info">
+        <p class="meta">
+            {totalCount} of {catalogs.length} items • {selectedCount} items selected
+        </p>
+    </div>
+
+    <!-- RIGHT SIDE (SEARCH) -->
+    <div class="right-actions">
+        <lightning-input
+            type="search"
+            variant="label-hidden"
+            placeholder="Search this list..."
+            onchange={handleSearch}>
+        </lightning-input>
+    </div>
+
+</div>
+
+        <!-- TABLE (SCROLLABLE) -->
+        <div class="table-container">
+
+            <lightning-datatable
+                key-field="catalogId"
+                data={filteredCatalogs}
+                columns={columns}
+                max-row-selection="1"
+                selected-rows={selectedRows}
+                onrowselection={handleRowSelection}>
+            </lightning-datatable>
+
+        </div>
+
+    </div>
+
+</template>

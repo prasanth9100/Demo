@@ -1,0 +1,91 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+}
+
+/* 🔥 SCROLL CONTAINER */
+.container {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+/* LIST */
+.list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 10px;
+}
+
+/* ROW */
+.row {
+    display: grid;
+    grid-template-columns: 80px 1.5fr 120px 140px 50px 110px;
+    gap: 12px;
+    padding: 14px;
+    border: 1px solid #e5e5e5;
+    border-radius: 10px;
+    align-items: center;
+}
+
+/* ALIGN FIX */
+.row lightning-button {
+    justify-self: end;
+}
+
+.row lightning-button-icon {
+    justify-self: center;
+}
+
+/* IMAGE */
+.image {
+    width: 70px;
+    height: 70px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #ddd;
+}
+
+.product-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.no-image {
+    font-size: 11px;
+    color: #aaa;
+    text-align: center;
+}
+
+/* TEXT */
+.name {
+    font-weight: 600;
+}
+
+.price {
+    color: #0176d3;
+}
+
+/* QTY */
+.qty {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* EMPTY */
+.empty {
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* LOADER */
+.spinner {
+    display: flex;
+    justify-content: center;
+    padding: 10px;
+}

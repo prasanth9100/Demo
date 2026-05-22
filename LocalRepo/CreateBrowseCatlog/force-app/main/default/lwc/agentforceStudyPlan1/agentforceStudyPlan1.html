@@ -1,0 +1,292 @@
+<template>
+    <div class="sp-wrap">
+
+        <!-- Header -->
+        <div class="sp-header">
+            <div class="sp-header__left">
+                <div class="sp-header__icon">
+                    <lightning-icon icon-name="utility:agent_home" size="small" alternative-text="Agentforce"></lightning-icon>
+                </div>
+                <div>
+                    <h1 class="sp-header__title">Agentforce 9-Day Study Plan</h1>
+                    <p class="sp-header__sub">Structured path to Agentforce Specialist Certification</p>
+                </div>
+            </div>
+            <div class="sp-header__stats">
+                <div class="sp-stat">
+                    <span class="sp-stat__num">{completedCount}</span>
+                    <span class="sp-stat__lbl">/ 9 Done</span>
+                </div>
+                <div class="sp-stat sp-stat--blue">
+                    <span class="sp-stat__num">{progressPct}%</span>
+                    <span class="sp-stat__lbl">Progress</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress bar -->
+        <div class="sp-progress">
+            <div class="sp-progress__track">
+                <template for:each={days} for:item="d">
+                    <div key={d.num} class={d.segClass} title={d.title}
+                         data-index={d.index} onclick={handleSegClick}></div>
+                </template>
+            </div>
+            <div class="sp-progress__labels">
+                <span>Day {currentDayNum} of 9</span>
+                <span>{progressPct}% complete</span>
+            </div>
+        </div>
+
+        <!-- Day tabs -->
+        <div class="sp-tabs" role="tablist">
+            <template for:each={days} for:item="d">
+                <button key={d.num} class={d.tabClass} data-index={d.index}
+                        onclick={handleTabClick} role="tab">
+                    Day {d.num}
+                    <template if:true={d.completed}>
+                        <span class="sp-tab__check">✓</span>
+                    </template>
+                </button>
+            </template>
+        </div>
+
+        <!-- Active day card -->
+        <template if:true={activeDay}>
+            <div class="sp-card">
+
+                <!-- Card header -->
+                <div class="sp-card__head" style={activeDayHeadStyle}>
+                    <div class="sp-card__badge" style={activeDayBadgeStyle}>D{activeDay.num}</div>
+                    <div class="sp-card__meta">
+                        <h2 class="sp-card__title">{activeDay.title}</h2>
+                        <p class="sp-card__sub">{activeDay.subtitle}</p>
+                        <div class="sp-chips">
+                            <span class="sp-chip sp-chip--time">⏱ {activeDay.time} / day</span>
+                            <template if:true={activeDay.examWeight}>
+                                <span class="sp-chip sp-chip--exam">Exam: {activeDay.examWeight}</span>
+                            </template>
+                            <template if:true={activeDay.isFinal}>
+                                <span class="sp-chip sp-chip--final">Final Day</span>
+                            </template>
+                        </div>
+                    </div>
+                    <button class={completeBtnClass} data-index={activeDay.index}
+                            onclick={toggleComplete} title={activeDay.completeTitle}>
+                        <template if:true={activeDay.completed}>✓ Done</template>
+                        <template if:false={activeDay.completed}>Mark Done</template>
+                    </button>
+                </div>
+
+                <!-- Inner section tabs -->
+                <div class="sp-inner-tabs">
+                    <button class={tab0Class} data-tab="0" onclick={handleSectionTab}>📚 Topics</button>
+                    <button class={tab1Class} data-tab="1" onclick={handleSectionTab}>🧪 Use Case</button>
+                    <button class={tab2Class} data-tab="2" onclick={handleSectionTab}>🏆 Trailheads</button>
+                    <button class={tab3Class} data-tab="3" onclick={handleSectionTab}>📝 My Notes</button>
+                </div>
+
+                <!-- SECTION 0: Topics -->
+                <template if:true={showTopics}>
+                    <div class="sp-section">
+                        <div class="sp-topic-grid">
+                            <template for:each={activeDay.topics} for:item="topic">
+                                <div key={topic.text} class={topic.cardClass}
+                                     data-topic={topic.text} onclick={handleTopicClick}>
+                                    <div class="sp-topic__dot" style={activeDayDotStyle}></div>
+                                    <div class="sp-topic__body">
+                                        <div class="sp-topic__title">{topic.text}</div>
+                                        <div class="sp-topic__sub">{topic.sub}</div>
+                                    </div>
+                                    <lightning-icon icon-name="utility:chevrondown" size="x-small"
+                                                   alternative-text="expand"></lightning-icon>
+                                </div>
+                            </template>
+                        </div>
+                        <template if:true={activeTopic}>
+                            <div class="sp-detail">
+                                <div class="sp-detail__head" style={activeDayBadgeStyle}>
+                                    <span class="sp-detail__heading">{activeTopic.text}</span>
+                                    <button class="sp-detail__close" onclick={closeTopic}>✕</button>
+                                </div>
+                                <div class="sp-detail__body">
+                                    <template for:each={activeTopic.details} for:item="det">
+                                        <div key={det.heading} class="sp-detail__block">
+                                            <div class="sp-detail__label">{det.heading}</div>
+                                            <p class="sp-detail__text">{det.text}</p>
+                                        </div>
+                                    </template>
+                                    <template if:true={activeTopic.docUrl}>
+                                        <button class="sp-doc-btn" data-url={activeTopic.docUrl}
+                                                onclick={navigateToUrl}>
+                                            Open Salesforce Help Docs ↗
+                                        </button>
+                                    </template>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+
+                <!-- SECTION 1: Use Case -->
+                <template if:true={showUseCase}>
+                    <div class="sp-section">
+                        <div class="sp-uc-box">
+                            <div class="sp-uc-label">Hands-On Scenario</div>
+                            <p class="sp-uc-intro">{activeDay.usecase.text}</p>
+                            <div class="sp-uc-steps">
+                                <template for:each={activeDay.usecase.steps} for:item="step" for:index="idx">
+                                    <div key={step} class="sp-uc-step">
+                                        <span class="sp-uc-step__num" style={activeDayBadgeStyle}>{idx}</span>
+                                        <span class="sp-uc-step__txt">{step}</span>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- SECTION 2: Trailheads + Help Docs -->
+                <template if:true={showTrailheads}>
+                    <div class="sp-section">
+                        <div class="sp-th-note">
+                            Click any card below to open it in a new tab.
+                        </div>
+                        <div class="sp-th-list">
+                            <template for:each={activeDay.trailheads} for:item="th">
+                                <div key={th.name} class="sp-th-card"
+                                     data-url={th.url} onclick={navigateToUrl}
+                                     role="button" tabindex="0">
+                                    <div class="sp-th-card__icon">
+                                        <lightning-icon icon-name={th.icon} size="small"
+                                                       alternative-text={th.type}></lightning-icon>
+                                    </div>
+                                    <div class="sp-th-card__info">
+                                        <div class="sp-th-card__name">{th.name}</div>
+                                        <div class="sp-th-card__meta">
+                                            <span class="sp-badge sp-badge--purple">{th.type}</span>
+                                            <span class="sp-th-card__domain">trailhead.salesforce.com</span>
+                                        </div>
+                                    </div>
+                                    <lightning-icon icon-name="utility:new_window" size="x-small"
+                                                   alternative-text="Open"></lightning-icon>
+                                </div>
+                            </template>
+                        </div>
+
+                        <div class="sp-help-section">
+                            <div class="sp-help-title">Official Salesforce Help Docs — Day {activeDay.num}</div>
+                            <div class="sp-help-list">
+                                <template for:each={activeDay.helpLinks} for:item="hl">
+                                    <div key={hl.title} class="sp-help-card"
+                                         data-url={hl.url} onclick={navigateToUrl}
+                                         role="button" tabindex="0">
+                                        <div class="sp-help-card__left">
+                                            <lightning-icon icon-name="utility:help" size="x-small"
+                                                           alternative-text="help"></lightning-icon>
+                                        </div>
+                                        <div class="sp-help-card__body">
+                                            <div class="sp-help-card__title">{hl.title}</div>
+                                            <div class="sp-help-card__url">{hl.url}</div>
+                                        </div>
+                                        <lightning-icon icon-name="utility:new_window" size="x-small"
+                                                       alternative-text="Open"></lightning-icon>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- SECTION 3: My Notes + Study Document -->
+                <template if:true={showNotes}>
+                    <div class="sp-section">
+                        <div class="sp-notes-wrap">
+                            <div class="sp-notes-header">
+                                <div class="sp-notes-title">My Study Notes — Day {activeDay.num}</div>
+                                <div class="sp-notes-actions">
+                                    <template if:true={noteSaved}>
+                                        <span class="sp-saved-badge">✓ Saved</span>
+                                    </template>
+                                    <button class="sp-btn sp-btn--outline" onclick={clearNote}>Clear</button>
+                                    <button class="sp-btn sp-btn--primary" onclick={saveNote}>Save Notes</button>
+                                </div>
+                            </div>
+                            <div class="sp-notes-fields">
+                                <div class="sp-field">
+                                    <label class="sp-field__label">Key takeaways from today</label>
+                                    <textarea class="sp-textarea"
+                                        placeholder="What were the most important concepts you learned today?"
+                                        data-field="takeaways"
+                                        onchange={handleNoteChange}>{activeDayNote.takeaways}</textarea>
+                                </div>
+                                <div class="sp-field">
+                                    <label class="sp-field__label">Hands-on notes (what you built / tested)</label>
+                                    <textarea class="sp-textarea"
+                                        placeholder="Document what you built in the org, issues hit, how you solved them..."
+                                        data-field="handson"
+                                        onchange={handleNoteChange}>{activeDayNote.handson}</textarea>
+                                </div>
+                                <div class="sp-field">
+                                    <label class="sp-field__label">Questions / Things to revisit</label>
+                                    <textarea class="sp-textarea sp-textarea--sm"
+                                        placeholder="Anything unclear that you want to come back to..."
+                                        data-field="questions"
+                                        onchange={handleNoteChange}>{activeDayNote.questions}</textarea>
+                                </div>
+                                <div class="sp-field">
+                                    <label class="sp-field__label">Confidence level (1–5 stars)</label>
+                                    <div class="sp-stars">
+                                        <template for:each={starList} for:item="s">
+                                            <button key={s.val} class={s.cls}
+                                                    data-val={s.val} onclick={handleStar}>★</button>
+                                        </template>
+                                        <span class="sp-stars__lbl">{starLabel}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Study Document reference -->
+                            <div class="sp-doc-ref">
+                                <div class="sp-doc-ref__title">
+                                    Day {activeDay.num} — Study Reference Document
+                                </div>
+                                <div class="sp-doc-ref__body">
+                                    <template for:each={activeDay.studyDoc} for:item="sec">
+                                        <div key={sec.heading} class="sp-doc-sec">
+                                            <div class="sp-doc-sec__heading" style={activeDayDocHeadStyle}>{sec.heading}</div>
+                                            <p class="sp-doc-sec__text">{sec.content}</p>
+                                            <template if:true={sec.bullets}>
+                                                <ul class="sp-doc-sec__bullets">
+                                                    <template for:each={sec.bullets} for:item="b">
+                                                        <li key={b}>{b}</li>
+                                                    </template>
+                                                </ul>
+                                            </template>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Footer nav -->
+                <div class="sp-footer">
+                    <template if:true={hasPrev}>
+                        <button class="sp-btn sp-btn--outline" onclick={goPrev}>← Prev</button>
+                    </template>
+                    <template if:false={hasPrev}><span></span></template>
+                    <span class="sp-footer__ctr">Day {activeDay.num} / 9</span>
+                    <template if:true={hasNext}>
+                        <button class="sp-btn sp-btn--primary" onclick={goNext}>Next →</button>
+                    </template>
+                    <template if:false={hasNext}>
+                        <button class="sp-btn sp-btn--success" onclick={openExamLink}>Register for Exam ↗</button>
+                    </template>
+                </div>
+
+            </div>
+        </template>
+    </div>
+</template>

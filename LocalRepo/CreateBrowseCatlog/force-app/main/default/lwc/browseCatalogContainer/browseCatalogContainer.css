@@ -1,0 +1,49 @@
+/* ROOT */
+.container {
+    height: 500px;                /* you wanted fixed height */
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* HEADER */
+.header {
+    flex-shrink: 0;
+    padding: 16px 24px;
+    border-bottom: 1px solid #ddd;
+    background: white;
+}
+
+/* 🔥 BODY WRAPPER (CRITICAL FIX) */
+.body-wrapper {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 🔥 SCROLL AREA */
+.scroll {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+/* FOOTER */
+.footer {
+    flex-shrink: 0;
+    display: flex;
+    width: 100%;
+    padding: 16px 24px;
+    border-top: 1px solid #ddd;
+    background: white;
+}
+
+/* BUTTON ALIGNMENT */
+.left {
+    margin-right: auto;
+}
+
+.right {
+    margin-left: auto;
+}

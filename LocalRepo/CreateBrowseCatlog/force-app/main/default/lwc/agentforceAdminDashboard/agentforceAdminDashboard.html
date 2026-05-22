@@ -1,0 +1,225 @@
+<template>
+  <div class="ad-wrap">
+
+    <!-- Header -->
+    <div class="ad-header">
+      <div class="ad-header__left">
+        <lightning-icon icon-name="utility:metrics" size="small" alternative-text="Dashboard"></lightning-icon>
+        <div>
+          <h1 class="ad-header__title">Agentforce Training — Admin Dashboard</h1>
+          <p class="ad-header__sub">Track all learner progress, notes, and confidence ratings</p>
+        </div>
+      </div>
+      <div class="ad-header__actions">
+        <lightning-button-icon icon-name="utility:refresh" variant="border-filled"
+          alternative-text="Refresh" title="Refresh data" onclick={refreshData}></lightning-button-icon>
+        <span class="ad-last-refresh">Last refreshed: {lastRefresh}</span>
+      </div>
+    </div>
+
+    <!-- Loading state -->
+    <template if:true={isLoading}>
+      <div class="ad-loading">
+        <lightning-spinner alternative-text="Loading..." size="medium"></lightning-spinner>
+        <p>Loading learner data...</p>
+      </div>
+    </template>
+
+    <!-- Error state -->
+    <template if:true={hasError}>
+      <div class="ad-error">
+        <lightning-icon icon-name="utility:error" size="small" alternative-text="error"></lightning-icon>
+        &nbsp;{errorMessage}
+      </div>
+    </template>
+
+    <template if:false={isLoading}>
+
+      <!-- KPI cards -->
+      <div class="ad-kpis">
+        <div class="ad-kpi">
+          <div class="ad-kpi__num">{totalLearners}</div>
+          <div class="ad-kpi__lbl">Total Learners</div>
+        </div>
+        <div class="ad-kpi ad-kpi--green">
+          <div class="ad-kpi__num">{completedLearners}</div>
+          <div class="ad-kpi__lbl">Completed (9/9)</div>
+        </div>
+        <div class="ad-kpi ad-kpi--blue">
+          <div class="ad-kpi__num">{inProgressLearners}</div>
+          <div class="ad-kpi__lbl">In Progress</div>
+        </div>
+        <div class="ad-kpi ad-kpi--amber">
+          <div class="ad-kpi__num">{notStartedLearners}</div>
+          <div class="ad-kpi__lbl">Not Started</div>
+        </div>
+        <div class="ad-kpi ad-kpi--purple">
+          <div class="ad-kpi__num">{avgProgressPct}%</div>
+          <div class="ad-kpi__lbl">Avg Progress</div>
+        </div>
+        <div class="ad-kpi">
+          <div class="ad-kpi__num">{avgStars}</div>
+          <div class="ad-kpi__lbl">Avg Confidence ★</div>
+        </div>
+      </div>
+
+      <!-- Day completion heatmap -->
+      <div class="ad-section">
+        <div class="ad-section__title">Day Completion Heatmap</div>
+        <div class="ad-heatmap">
+          <template for:each={dayHeatmap} for:item="dh">
+            <div key={dh.day} class="ad-heat-col">
+              <div class="ad-heat-label">Day {dh.day}</div>
+              <div class="ad-heat-bar-wrap">
+                <div class="ad-heat-bar" style={dh.barStyle} title={dh.tooltip}></div>
+              </div>
+              <div class="ad-heat-pct">{dh.pct}%</div>
+            </div>
+          </template>
+        </div>
+      </div>
+
+      <!-- Filter + Search bar -->
+      <div class="ad-toolbar">
+        <lightning-input type="search" label="" placeholder="Search learner name or email..."
+          onchange={handleSearch} variant="label-hidden" class="ad-search"></lightning-input>
+        <div class="ad-filter-btns">
+          <button class={filterAllClass}       data-filter="All"          onclick={handleFilter}>All</button>
+          <button class={filterCompletedClass} data-filter="Completed"    onclick={handleFilter}>✅ Completed</button>
+          <button class={filterInProgClass}    data-filter="In Progress"  onclick={handleFilter}>🔄 In Progress</button>
+          <button class={filterStartedClass}   data-filter="Started"      onclick={handleFilter}>▶ Started</button>
+          <button class={filterNotStartClass}  data-filter="Not Started"  onclick={handleFilter}>⬜ Not Started</button>
+        </div>
+        <div class="ad-export">
+          <button class="ad-btn ad-btn--outline" onclick={exportCsv}>⬇ Export CSV</button>
+        </div>
+      </div>
+
+      <!-- Learner table -->
+      <div class="ad-table-wrap">
+        <table class="ad-table">
+          <thead>
+            <tr>
+              <th onclick={sortBy} data-col="userName" class="ad-th ad-th--sortable">Learner {sortIconName}</th>
+              <th class="ad-th">Email</th>
+              <th onclick={sortBy} data-col="completedDays" class="ad-th ad-th--sortable">Days Done</th>
+              <th class="ad-th">Progress</th>
+              <th onclick={sortBy} data-col="avgStars" class="ad-th ad-th--sortable">Avg ★</th>
+              <th class="ad-th">Status</th>
+              <th onclick={sortBy} data-col="lastActivity" class="ad-th ad-th--sortable">Last Active</th>
+              <th class="ad-th">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <template if:true={hasLearners}>
+              <template for:each={filteredLearners} for:item="l">
+                <tr key={l.userId} class="ad-tr">
+                  <td class="ad-td ad-td--name">
+                    <div class="ad-avatar" style={l.avatarStyle}>{l.initials}</div>
+                    {l.userName}
+                  </td>
+                  <td class="ad-td ad-td--email">{l.userEmail}</td>
+                  <td class="ad-td ad-td--center">
+                    <span class="ad-days-badge">{l.completedDays}/9</span>
+                  </td>
+                  <td class="ad-td ad-td--progress">
+                    <div class="ad-prog-wrap">
+                      <div class="ad-prog-bar">
+                        <div class="ad-prog-fill" style={l.progStyle}></div>
+                      </div>
+                      <span class="ad-prog-pct">{l.progressPct}%</span>
+                    </div>
+                  </td>
+                  <td class="ad-td ad-td--center">
+                    <span class="ad-star-display">{l.avgStarsDisplay}</span>
+                  </td>
+                  <td class="ad-td">
+                    <span class={l.statusClass}>{l.status}</span>
+                  </td>
+                  <td class="ad-td ad-td--date">{l.lastActivityFormatted}</td>
+                  <td class="ad-td">
+                    <button class="ad-btn ad-btn--sm" data-userid={l.userId}
+                            onclick={viewLearnerDetail}>View Detail</button>
+                  </td>
+                </tr>
+              </template>
+            </template>
+            <template if:false={hasLearners}>
+              <tr><td colspan="8" class="ad-td ad-td--empty">No learners found matching the current filter.</td></tr>
+            </template>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Learner detail panel -->
+      <template if:true={selectedLearner}>
+        <div class="ad-detail-panel">
+          <div class="ad-detail-header">
+            <div class="ad-detail-name">
+              <div class="ad-avatar ad-avatar--lg" style={selectedLearner.avatarStyle}>{selectedLearner.initials}</div>
+              <div>
+                <div class="ad-detail-uname">{selectedLearner.userName}</div>
+                <div class="ad-detail-email">{selectedLearner.userEmail}</div>
+              </div>
+            </div>
+            <div class="ad-detail-stats">
+              <div class="ad-detail-stat">
+                <span class="ad-detail-stat__num">{selectedLearner.completedDays}/9</span>
+                <span class="ad-detail-stat__lbl">Days Done</span>
+              </div>
+              <div class="ad-detail-stat">
+                <span class="ad-detail-stat__num">{selectedLearner.progressPct}%</span>
+                <span class="ad-detail-stat__lbl">Progress</span>
+              </div>
+              <div class="ad-detail-stat">
+                <span class="ad-detail-stat__num">{selectedLearner.avgStarsDisplay}</span>
+                <span class="ad-detail-stat__lbl">Avg Rating</span>
+              </div>
+            </div>
+            <button class="ad-close-btn" onclick={closeDetail}>✕ Close</button>
+          </div>
+
+          <!-- Day-by-day breakdown -->
+          <div class="ad-detail-grid">
+            <template for:each={selectedLearnerDays} for:item="d">
+              <div key={d.dayNum} class={d.cardClass}>
+                <div class="ad-day-card__header" style={d.headerStyle}>
+                  <span class="ad-day-card__num">Day {d.dayNum}</span>
+                  <span class="ad-day-card__status">{d.statusLabel}</span>
+                </div>
+                <div class="ad-day-card__body">
+                  <div class="ad-day-card__rating">
+                    <span class="ad-day-card__stars">{d.starsDisplay}</span>
+                    <span class="ad-day-card__date">{d.lastSavedFormatted}</span>
+                  </div>
+                  <template if:true={d.hasTakeaways}>
+                    <div class="ad-day-card__section">
+                      <div class="ad-day-card__label">Key Takeaways</div>
+                      <div class="ad-day-card__note">{d.takeaways}</div>
+                    </div>
+                  </template>
+                  <template if:true={d.hasHandson}>
+                    <div class="ad-day-card__section">
+                      <div class="ad-day-card__label">Hands-On Notes</div>
+                      <div class="ad-day-card__note">{d.handson}</div>
+                    </div>
+                  </template>
+                  <template if:true={d.hasQuestions}>
+                    <div class="ad-day-card__section">
+                      <div class="ad-day-card__label">Questions to Revisit</div>
+                      <div class="ad-day-card__note ad-day-card__note--question">{d.questions}</div>
+                    </div>
+                  </template>
+                  <template if:false={d.hasNotes}>
+                    <div class="ad-day-card__empty">No notes submitted yet</div>
+                  </template>
+                </div>
+              </div>
+            </template>
+          </div>
+        </div>
+      </template>
+
+    </template>
+  </div>
+</template>

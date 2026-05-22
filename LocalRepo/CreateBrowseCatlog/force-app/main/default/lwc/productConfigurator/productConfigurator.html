@@ -1,0 +1,373 @@
+<template>
+    <div class="cfg-root">
+
+        <!-- ═══════════════════ HEADER BAR ═══════════════════ -->
+        <div class="cfg-header">
+            <h2 class="cfg-title">Configure {productName}</h2>
+        </div>
+
+        <!-- ═══════════════════ LOADING ═══════════════════ -->
+        <template if:true={isLoading}>
+            <div class="loading-container">
+                <lightning-spinner alternative-text="Loading configuration"></lightning-spinner>
+            </div>
+        </template>
+
+        <!-- ═══════════════════ MAIN BODY ═══════════════════ -->
+        <template if:false={isLoading}>
+            <div class="cfg-body">
+
+                <!-- LEFT PANEL -->
+                <div class="cfg-left">
+
+                    <!-- PRODUCT INFO ROW -->
+                    <div class="product-row">
+                        <template if:true={productImage}>
+                            <img src={productImage} alt={productName} class="product-img" onerror={handleImageError} />
+                        </template>
+                        <template if:false={productImage}>
+                            <div class="product-img-placeholder">
+                                <lightning-icon icon-name="utility:product" size="large"></lightning-icon>
+                            </div>
+                        </template>
+
+                        <div class="product-info">
+                            <h3 class="product-name">{productName}</h3>
+                            <template if:true={productDescription}>
+                                <p class="product-description">{productDescription}</p>
+                            </template>
+                        </div>
+
+                        <div class="product-price-block">
+                            <span class="product-price">₹ {productPrice}</span>
+                            <span class="price-type">One Time</span>
+                        </div>
+                    </div>
+
+                    <!-- QUANTITY -->
+                    <div class="qty-row">
+                        <label class="qty-label">Quantity</label>
+                        <input
+                            type="number"
+                            class="qty-input"
+                            value={quantity}
+                            min="1"
+                            onchange={handleQuantityChange}
+                        />
+                    </div>
+
+                    <!-- PARENT ATTRIBUTE TABS -->
+                    <template if:true={hasGroups}>
+                        <div class="tab-bar">
+                            <template for:each={groups} for:item="grp">
+                                <button
+                                    key={grp.name}
+                                    class={grp.tabClass}
+                                    data-group={grp.name}
+                                    onclick={handleTabClick}>
+                                    {grp.name}
+                                </button>
+                            </template>
+                        </div>
+
+                        <div class="tab-content">
+                            <template for:each={activeGroupAttributes} for:item="attr">
+                                <div key={attr.attributeId} class="attr-row">
+                                    <label class="attr-label">
+                                        <template if:true={attr.required}>
+                                            <span class="required-star">* </span>
+                                        </template>
+                                        {attr.name}
+                                    </label>
+
+                                    <template if:true={attr.isPicklist}>
+                                        <div class="select-wrapper">
+                                            <select
+                                                class="attr-select"
+                                                data-id={attr.attributeId}
+                                                onchange={handleAttrChange}>
+                                                <template for:each={attr.options} for:item="opt">
+                                                    <option key={opt.value} value={opt.value} selected={opt.selected}>
+                                                        {opt.label}
+                                                    </option>
+                                                </template>
+                                            </select>
+                                            <span class="select-arrow">▾</span>
+                                        </div>
+                                    </template>
+
+                                    <template if:false={attr.isPicklist}>
+                                        <input
+                                            type={attr.inputType}
+                                            class="attr-input"
+                                            value={attr.value}
+                                            data-id={attr.attributeId}
+                                            onchange={handleAttrChange}
+                                        />
+                                    </template>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+
+                    <!-- BUNDLE ITEMS -->
+                    <template if:true={hasBundleItems}>
+                        <div class="bundle-section">
+
+                            <!-- BUNDLE GROUP TABS -->
+                            <div class="tab-bar">
+                                <template for:each={bundleGroups} for:item="bg">
+                                    <button
+                                        key={bg.name}
+                                        class={bg.tabClass}
+                                        data-group={bg.name}
+                                        onclick={handleBundleTabClick}>
+                                        {bg.name}
+                                    </button>
+                                </template>
+                            </div>
+
+                            <!-- CHILD PRODUCT CARDS -->
+                            <div class="bundle-cards">
+                                <template for:each={activeBundleItems} for:item="b">
+                                    <div key={b.productId} class={b.cardClass}>
+
+                                        <!-- CARD HEADER ROW -->
+                                        <div class="bundle-card-header">
+
+                                            <label class="bundle-checkbox-label">
+                                                <input
+                                                    type="checkbox"
+                                                    class="bundle-checkbox"
+                                                    checked={b.included}
+                                                    data-id={b.productId}
+                                                    onchange={handleBundleIncludeToggle}
+                                                />
+                                                <span class="bundle-product-name">{b.name}</span>
+                                            </label>
+
+                                            <div class="bundle-card-controls">
+
+                                                <input
+                                                    type="number"
+                                                    class="qty-input bundle-qty-input"
+                                                    value={b.quantity}
+                                                    min="1"
+                                                    data-id={b.productId}
+                                                    onchange={handleBundleQtyChange}
+                                                />
+
+                                                <span class="bundle-price">₹ {b.price}</span>
+
+                                                <!-- Gear icon -->
+                                                <template if:true={b.hasChildConfig}>
+                                                    <button
+                                                        class="gear-btn"
+                                                        data-id={b.productId}
+                                                        onclick={handleToggleExpand}
+                                                        title="Configure">
+                                                        <lightning-icon icon-name="utility:settings" size="x-small"></lightning-icon>
+                                                    </button>
+                                                </template>
+
+                                                <!-- Chevron always visible -->
+                                                <button
+                                                    class="expand-btn"
+                                                    data-id={b.productId}
+                                                    onclick={handleToggleExpand}>
+                                                    <lightning-icon icon-name={b.expandIcon} size="xx-small"></lightning-icon>
+                                                </button>
+
+                                            </div>
+                                        </div>
+
+                                        <!-- DESCRIPTION -->
+                                        <template if:true={b.description}>
+                                            <p class="bundle-description">{b.description}</p>
+                                        </template>
+
+                                        <!-- EXPANDED: inline child attributes or nested bundle -->
+                                        <template if:true={b.expanded}>
+                                            <div class="child-config-section">
+
+                                                <template if:true={b.hasInlineAttrs}>
+                                                    <div class="child-attrs">
+                                                        <template for:each={b.childAttributes} for:item="ca">
+                                                            <div key={ca.attributeId} class="attr-row">
+                                                                <label class="attr-label">
+                                                                    <template if:true={ca.required}>
+                                                                        <span class="required-star">* </span>
+                                                                    </template>
+                                                                    {ca.name}
+                                                                </label>
+
+                                                                <template if:true={ca.isPicklist}>
+                                                                    <div class="select-wrapper">
+                                                                        <select
+                                                                            class="attr-select"
+                                                                            data-bundle-id={b.productId}
+                                                                            data-id={ca.attributeId}
+                                                                            onchange={handleChildAttrChange}>
+                                                                            <template for:each={ca.options} for:item="opt">
+                                                                                <option key={opt.value} value={opt.value} selected={opt.selected}>
+                                                                                    {opt.label}
+                                                                                </option>
+                                                                            </template>
+                                                                        </select>
+                                                                        <span class="select-arrow">▾</span>
+                                                                    </div>
+                                                                </template>
+
+                                                                <template if:false={ca.isPicklist}>
+                                                                    <input
+                                                                        type={ca.inputType}
+                                                                        class="attr-input"
+                                                                        value={ca.value}
+                                                                        data-bundle-id={b.productId}
+                                                                        data-id={ca.attributeId}
+                                                                        onchange={handleChildAttrChange}
+                                                                    />
+                                                                </template>
+                                                            </div>
+                                                        </template>
+                                                    </div>
+                                                </template>
+
+                                                <template if:true={b.hasNestedBundle}>
+                                                    <div class="nested-bundle-list">
+                                                        <template for:each={b.nestedBundleItems} for:item="nb">
+                                                            <div key={nb.productId} class="nested-bundle-row">
+                                                                <label class="bundle-checkbox-label">
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        class="bundle-checkbox"
+                                                                        checked={nb.included}
+                                                                        data-parent-id={b.productId}
+                                                                        data-id={nb.productId}
+                                                                        onchange={handleNestedBundleToggle}
+                                                                    />
+                                                                    <span class="bundle-product-name nested-name">{nb.name}</span>
+                                                                </label>
+                                                                <div class="bundle-card-controls">
+                                                                    <input
+                                                                        type="number"
+                                                                        class="qty-input bundle-qty-input"
+                                                                        value={nb.quantity}
+                                                                        min="1"
+                                                                        data-parent-id={b.productId}
+                                                                        data-id={nb.productId}
+                                                                        onchange={handleNestedBundleQtyChange}
+                                                                    />
+                                                                    <span class="bundle-price">₹ {nb.price}</span>
+                                                                </div>
+                                                            </div>
+                                                        </template>
+                                                    </div>
+                                                </template>
+
+                                            </div>
+                                        </template>
+
+                                    </div>
+                                </template>
+                            </div>
+
+                        </div>
+                    </template>
+
+                    <!-- EMPTY STATE -->
+                    <template if:false={hasData}>
+                        <div class="empty-state">
+                            <lightning-icon icon-name="utility:settings" size="large"></lightning-icon>
+                            <p>No configuration available for this product.</p>
+                        </div>
+                    </template>
+
+                </div>
+
+                <!-- RIGHT PANEL — SUMMARY -->
+                <div class="cfg-right">
+                    <div class="summary-panel">
+
+                        <h3 class="summary-title">Summary</h3>
+                        <div class="summary-product-name">{productName}</div>
+
+                        <div class="summary-row summary-qty-row">
+                            <div>
+                                <div class="summary-field-label">Quantity</div>
+                                <div class="summary-field-val">{quantity}</div>
+                            </div>
+                            <div class="summary-field-label">Net Amount</div>
+                        </div>
+
+                        <template for:each={bundleGroups} for:item="bg">
+                            <div key={bg.name} class="summary-bundle-group">
+                                <div class="summary-section-label">{bg.name}</div>
+                                <template for:each={bg.includedItems} for:item="bi">
+                                    <div key={bi.productId} class="summary-bundle-item">
+                                        <div class="summary-bundle-item-header">
+                                            <span class="summary-bundle-chip">{bi.name}</span>
+                                            <template if:true={bi.attrSummary}>
+                                                <span class="summary-attr-chip-inline">{bi.attrSummary}</span>
+                                            </template>
+                                        </div>
+                                        <div class="summary-qty-row summary-bundle-subrow">
+                                            <div>
+                                                <div class="summary-field-label">Quantity</div>
+                                                <div class="summary-field-val">{bi.quantity}</div>
+                                            </div>
+                                            <span class="summary-net-amount">{bi.netAmountLabel}</span>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
+
+                        <template if:true={hasSummaryAttrs}>
+                            <div class="summary-section-label">Attributes</div>
+                            <template for:each={summaryAttributes} for:item="sa">
+                                <div key={sa.attributeId} class="summary-attr-row">
+                                    <span class="summary-attr-name">{sa.name}</span>
+                                    <span class="summary-attr-val">{sa.value}</span>
+                                </div>
+                            </template>
+                        </template>
+
+                        <div class="summary-totals">
+                            <div class="summary-total-row">
+                                <span class="total-label">One Time Total</span>
+                                <span class="total-val">{oneTimeTotal}</span>
+                            </div>
+                            <div class="summary-total-row">
+                                <span class="total-label">Monthly Total</span>
+                                <span class="total-val">-</span>
+                            </div>
+                            <div class="summary-total-row">
+                                <span class="total-label">Annual Total</span>
+                                <span class="total-val">-</span>
+                            </div>
+                            <div class="summary-total-row">
+                                <span class="total-label">Quarterly Total</span>
+                                <span class="total-val">-</span>
+                            </div>
+                            <div class="summary-total-row">
+                                <span class="total-label">Semi-Annual Total</span>
+                                <span class="total-val">-</span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </template>
+
+        <!-- ═══════════════════ FOOTER ═══════════════════ -->
+        <div class="cfg-footer">
+            <lightning-button label="Cancel" onclick={handleClose}></lightning-button>
+            <lightning-button label="Update Prices" icon-name="utility:refresh" onclick={handleUpdatePrices}></lightning-button>
+            <lightning-button label="Save &amp; Exit" variant="brand" onclick={handleSave}></lightning-button>
+        </div>
+
+    </div>
+</template>

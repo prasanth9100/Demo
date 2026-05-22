@@ -1,0 +1,89 @@
+<template>
+
+    <!-- 🔥 ONLY THIS SCROLLS -->
+    <div class="container" onscroll={handleScroll}>
+
+        <!-- PRODUCTS -->
+        <template if:true={products.length}>
+
+            <div class="list">
+
+                <template for:each={enrichedProducts} for:item="p">
+                    <div key={p.productId} class="row">
+
+                        <!-- IMAGE -->
+                        <div class="image">
+                            <template if:true={p.displayUrl}>
+                                <img
+                                    src={p.displayUrl}
+                                    class="product-img"
+                                    onerror={handleImageError}/>
+                            </template>
+
+                            <template if:false={p.displayUrl}>
+                                <div class="no-image">No Image</div>
+                            </template>
+                        </div>
+
+                        <!-- NAME -->
+                        <div class="name">{p.name}</div>
+
+                        <!-- PRICE -->
+                        <div class="price">₹ {p.price}</div>
+
+                        <!-- QTY -->
+                        <div class="qty">
+
+                            <lightning-button-icon
+                                icon-name="utility:dash"
+                                data-id={p.productId}
+                                onclick={decrease}>
+                            </lightning-button-icon>
+
+                            <span>{p.quantity}</span>
+
+                            <lightning-button-icon
+                                icon-name="utility:add"
+                                data-id={p.productId}
+                                onclick={increase}>
+                            </lightning-button-icon>
+
+                        </div>
+
+                        <!-- CONFIG -->
+                        <lightning-button-icon
+                            icon-name="utility:settings"
+                            data-id={p.productId}
+                            onclick={openConfig}>
+                        </lightning-button-icon>
+
+                        <!-- ADD -->
+                        <lightning-button
+                            label="Add"
+                            variant="brand"
+                            data-id={p.productId}
+                            onclick={add}>
+                        </lightning-button>
+
+                    </div>
+                </template>
+
+            </div>
+
+        </template>
+
+        <!-- EMPTY -->
+        <template if:false={products.length}>
+            <div class="empty">No products found</div>
+        </template>
+
+        <!-- LOADER -->
+        <template if:true={isFetching}>
+            <div class="spinner">
+                <lightning-spinner alternative-text="Loading"></lightning-spinner>
+            </div>
+        </template>
+
+    </div>
+
+</template>

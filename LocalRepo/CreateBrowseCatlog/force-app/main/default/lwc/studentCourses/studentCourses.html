@@ -1,0 +1,65 @@
+<template>
+    <lightning-card title="Course Registrations" icon-name="standard:record">
+        <div class="slds-m-around_medium">
+            <!-- Course List -->
+            <template if:true={courses.data}>
+                <div class="slds-section slds-is-open">
+                    <h2 class="slds-section__title slds-theme_shade">
+                        <span class="slds-p-left_x-small">Registered Courses</span>
+                    </h2>
+                    <div class="slds-section__content">
+                        <template if:true={courses.data.length}>
+                            <lightning-datatable
+                                key-field="Id"
+                                data={courses.data}
+                                columns={columns}
+                                hide-checkbox-column="true">
+                            </lightning-datatable>
+                        </template>
+                        <template if:false={courses.data.length}>
+                            <p class="slds-text-color_weak">No courses registered yet.</p>
+                        </template>
+                    </div>
+                </div>
+            </template>
+
+            <!-- Add Course Form -->
+            <div class="slds-section slds-is-open">
+                <h2 class="slds-section__title slds-theme_shade">
+                    <span class="slds-p-left_x-small">Add New Course</span>
+                </h2>
+                <div class="slds-section__content">
+                    <lightning-layout>
+                        <lightning-layout-item size="12" padding="around-small">
+                            <lightning-input
+                                label="Course Name"
+                                value={courseName}
+                                onchange={handleCourseNameChange}
+                                required>
+                            </lightning-input>
+                        </lightning-layout-item>
+                        <lightning-layout-item size="12" padding="around-small">
+                            <lightning-input
+                                label="Fee"
+                                type="number"
+                                value={fee}
+                                onchange={handleFeeChange}
+                                step="0.01"
+                                min="0"
+                                required>
+                            </lightning-input>
+                        </lightning-layout-item>
+                        <lightning-layout-item size="12" padding="around-small">
+                            <lightning-button
+                                label="Add Course"
+                                variant="brand"
+                                onclick={handleAddCourse}
+                                class="slds-m-top_small">
+                            </lightning-button>
+                        </lightning-layout-item>
+                    </lightning-layout>
+                </div>
+            </div>
+        </div>
+    </lightning-card>
+</template>

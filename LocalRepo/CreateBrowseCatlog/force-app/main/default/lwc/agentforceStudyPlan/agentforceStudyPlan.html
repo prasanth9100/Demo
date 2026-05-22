@@ -1,0 +1,229 @@
+<template>
+    <div class="study-plan-container">
+
+        <!-- Header -->
+        <div class="plan-header">
+            <div class="header-left">
+                <div class="header-icon">
+                    <lightning-icon icon-name="utility:agent_home" size="medium" alternative-text="Agentforce"></lightning-icon>
+                </div>
+                <div>
+                    <h1 class="plan-title">Agentforce 9-Day Study Plan</h1>
+                    <p class="plan-subtitle">Structured path to Agentforce Specialist Certification</p>
+                </div>
+            </div>
+            <div class="header-stats">
+                <div class="stat-chip">
+                    <span class="stat-num">{completedCount}</span>
+                    <span class="stat-label">/ 9 Days Done</span>
+                </div>
+                <div class="stat-chip accent">
+                    <span class="stat-num">~4h</span>
+                    <span class="stat-label">Per Day</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-section">
+            <div class="progress-track">
+                <template for:each={days} for:item="d">
+                    <div
+                        key={d.num}
+                        class={d.segClass}
+                        title={d.title}
+                        data-index={d.index}
+                        onclick={handleSegClick}>
+                        <span class="seg-num">{d.num}</span>
+                    </div>
+                </template>
+            </div>
+            <div class="progress-labels">
+                <span class="prog-text">Progress</span>
+                <span class="prog-pct">{progressPct}% complete</span>
+            </div>
+        </div>
+
+        <!-- Day Tabs -->
+        <div class="day-tabs" role="tablist">
+            <template for:each={days} for:item="d">
+                <button
+                    key={d.num}
+                    class={d.tabClass}
+                    data-index={d.index}
+                    onclick={handleTabClick}
+                    role="tab"
+                    aria-selected={d.isActive}>
+                    <span>Day {d.num}</span>
+                    <template if:true={d.completed}>
+                        <span class="tab-check">✓</span>
+                    </template>
+                </button>
+            </template>
+        </div>
+
+        <!-- Active Day Card -->
+        <template if:true={activeDay}>
+            <div class="day-card">
+
+                <!-- Day Card Header -->
+                <div class="day-card-header" style={activeDayHeaderStyle}>
+                    <div class="day-number-badge" style={activeDayBadgeStyle}>
+                        D{activeDay.num}
+                    </div>
+                    <div class="day-card-meta">
+                        <h2 class="day-card-title">{activeDay.title}</h2>
+                        <p class="day-card-subtitle">{activeDay.subtitle}</p>
+                        <div class="day-chips">
+                            <span class="chip chip-time">⏱ {activeDay.time} / day</span>
+                            <template if:true={activeDay.examWeight}>
+                                <span class="chip chip-exam">Exam: {activeDay.examWeight}</span>
+                            </template>
+                            <template if:true={activeDay.isFinal}>
+                                <span class="chip chip-final">Final Day</span>
+                            </template>
+                        </div>
+                    </div>
+                    <div class="day-complete-action">
+                        <lightning-button-icon
+                            icon-name={activeDay.completeIcon}
+                            variant={activeDay.completeVariant}
+                            size="large"
+                            alternative-text="Mark complete"
+                            title={activeDay.completeTitle}
+                            data-index={activeDay.index}
+                            onclick={toggleComplete}>
+                        </lightning-button-icon>
+                    </div>
+                </div>
+
+                <!-- Topics Section -->
+                <div class="card-section">
+                    <div class="section-header">
+                        <lightning-icon icon-name="utility:knowledge_base" size="x-small" alternative-text="Topics"></lightning-icon>
+                        <span class="section-label">Topics to Cover</span>
+                    </div>
+                    <div class="topics-grid">
+                        <template for:each={activeDay.topics} for:item="topic">
+                            <div key={topic.text} class="topic-card" data-topic={topic.text} onclick={handleTopicClick}>
+                                <div class="topic-dot" style={activeDayDotStyle}></div>
+                                <div class="topic-content">
+                                    <div class="topic-title">{topic.text}</div>
+                                    <div class="topic-sub">{topic.sub}</div>
+                                </div>
+                                <lightning-icon icon-name="utility:chevronright" size="x-small" alternative-text="View details" class="topic-arrow"></lightning-icon>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+                <!-- Topic Detail Panel (shown when topic is selected) -->
+                <template if:true={activeTopic}>
+                    <div class="topic-detail-panel">
+                        <div class="topic-detail-header">
+                            <div class="topic-detail-title">{activeTopic.text}</div>
+                            <lightning-button-icon
+                                icon-name="utility:close"
+                                variant="bare"
+                                size="small"
+                                alternative-text="Close"
+                                onclick={closeTopic}>
+                            </lightning-button-icon>
+                        </div>
+                        <div class="topic-detail-body">
+                            <template for:each={activeTopic.details} for:item="detail">
+                                <div key={detail.heading} class="detail-block">
+                                    <div class="detail-heading">{detail.heading}</div>
+                                    <p class="detail-text">{detail.text}</p>
+                                </div>
+                            </template>
+                            <template if:true={activeTopic.docUrl}>
+                                <a href={activeTopic.docUrl} target="_blank" class="doc-link">
+                                    <lightning-icon icon-name="utility:new_window" size="x-small" alternative-text="Open docs"></lightning-icon>
+                                    <span>View Salesforce Help Docs</span>
+                                </a>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Use Case Section -->
+                <div class="card-section">
+                    <div class="section-header">
+                        <lightning-icon icon-name="utility:connected_apps" size="x-small" alternative-text="Use case"></lightning-icon>
+                        <span class="section-label">Hands-On Use Case</span>
+                    </div>
+                    <div class="usecase-box">
+                        <div class="usecase-label">Scenario</div>
+                        <p class="usecase-text">{activeDay.usecase.text}</p>
+                        <div class="usecase-steps">
+                            <template for:each={activeDay.usecase.steps} for:item="step">
+                                <div key={step} class="usecase-step">
+                                    <span class="step-bullet" style={activeDayDotStyle}></span>
+                                    <span>{step}</span>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Trailheads Section -->
+                <div class="card-section">
+                    <div class="section-header">
+                        <lightning-icon icon-name="utility:trail" size="x-small" alternative-text="Trailhead"></lightning-icon>
+                        <span class="section-label">Trailhead Resources</span>
+                    </div>
+                    <div class="trailheads-list">
+                        <template for:each={activeDay.trailheads} for:item="th">
+                            <a key={th.name} href={th.url} target="_blank" class="th-card">
+                                <div class="th-icon-wrap">
+                                    <lightning-icon icon-name={th.icon} size="small" alternative-text={th.type}></lightning-icon>
+                                </div>
+                                <div class="th-info">
+                                    <div class="th-name">{th.name}</div>
+                                    <div class="th-meta">
+                                        <span class="th-type-badge">{th.type}</span>
+                                        <span class="th-domain">trailhead.salesforce.com</span>
+                                    </div>
+                                </div>
+                                <lightning-icon icon-name="utility:new_window" size="x-small" alternative-text="Open" class="th-arrow"></lightning-icon>
+                            </a>
+                        </template>
+                    </div>
+                </div>
+
+                <!-- Navigation Footer -->
+                <div class="day-footer">
+                    <template if:true={hasPrev}>
+                        <lightning-button
+                            label="← Previous Day"
+                            variant="neutral"
+                            onclick={goPrev}>
+                        </lightning-button>
+                    </template>
+                    <template if:false={hasPrev}>
+                        <span></span>
+                    </template>
+                    <div class="footer-center">
+                        <span class="footer-day-indicator">Day {activeDay.num} of 9</span>
+                    </div>
+                    <template if:true={hasNext}>
+                        <lightning-button
+                            label="Next Day →"
+                            variant="brand"
+                            onclick={goNext}>
+                        </lightning-button>
+                    </template>
+                    <template if:false={hasNext}>
+                        <lightning-button
+                            label="Register for Exam ↗"
+                            variant="success"
+                            onclick={openExamLink}>
+                        </lightning-button>
+                    </template>
+                </div>
+            </div>
+        </template>
+
+    </div>
+</template>

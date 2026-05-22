@@ -1,0 +1,201 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+}
+
+/* MAIN */
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* CONTENT */
+.content {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+
+/* LAYOUT */
+.layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 16px;
+    height: 100%;
+}
+
+/* SIDEBAR */
+.sidebar {
+    border-right: 1px solid #eee;
+    overflow: hidden;
+}
+
+/* PRODUCTS */
+.products {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+}
+
+/* 🔥 TOOLBAR */
+.toolbar {
+    flex-shrink: 0;
+    display: flex;
+    align-items: flex-start;
+    padding: 12px 20px;
+    border-bottom: 1px solid #e5e5e5;
+    background: #fafafa;
+}
+
+/* LEFT */
+.left-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-right: auto;
+}
+
+/* TITLE */
+.title {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+/* META */
+.meta {
+    font-size: 13px;
+    color: #555;
+}
+
+/* SELECTED COUNT */
+.count {
+    font-size: 13px;
+    color: #0176d3;
+    font-weight: 500;
+}
+
+/* RIGHT */
+.right-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: auto;
+}
+
+/* SEARCH */
+.right-actions lightning-input {
+    width: 260px;
+}
+/* ── FILTER BUTTON WRAPPER (positions the dropdown) ── */
+.icon-btn-wrap {
+    position: relative;
+}
+ 
+/* Highlight filter button when a filter is active */
+.filter-active lightning-button-icon {
+    --sds-c-button-color-border: #0176d3;
+    --sds-c-button-color-background: #e8f4fd;
+}
+ 
+/* ── FILTER DROPDOWN ── */
+.filter-dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    z-index: 9000;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    padding: 14px 16px;
+    width: 220px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+ 
+.filter-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #3e3e3c;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #f0f0f0;
+}
+ 
+.filter-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #181818;
+    cursor: pointer;
+}
+ 
+.filter-option input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #0176d3;
+    cursor: pointer;
+}
+ 
+.filter-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding-top: 6px;
+    border-top: 1px solid #f0f0f0;
+}
+
+/* POPUP */
+.popup {
+    position: absolute;
+    right: 24px;
+    top: 90px;
+    width: 320px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    z-index: 1000;
+}
+
+.popup-header {
+    padding: 10px;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+}
+
+.popup-body {
+    padding: 10px;
+}
+
+.popup-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.empty {
+    text-align: center;
+    color: #999;
+}
+
+/* MODAL */
+.custom-modal {
+    width: 90vw !important;
+    height: 90vh !important;
+    display: flex;
+    flex-direction: column;
+}
+
+.content-modal {
+    flex: 1;
+    overflow-y: auto;
+}

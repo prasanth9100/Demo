@@ -1,0 +1,185 @@
+<template>
+
+    <div class="container">
+
+        <!-- MAIN CONTENT -->
+        <div class="content">
+
+            <div class="layout">
+
+                <!-- SIDEBAR -->
+                <div class="sidebar">
+                    <c-category-sidebar catalog-id={catalogId} oncategoryselect={handleCategory}>
+                    </c-category-sidebar>
+                </div>
+
+                <!-- PRODUCTS -->
+                <div class="products">
+
+                    <!-- TOOLBAR -->
+                    <div class="toolbar">
+
+                        <!-- LEFT -->
+                        <div class="left-info">
+                            <p class="meta">
+                                Catalog: <b>{catalogName}</b>
+                                </br>
+                                Pricebook: <b>{pricebookName}</b>
+                            </p>
+                        </div>
+
+                        <!-- RIGHT -->
+                        <div class="right-actions">
+
+                            <lightning-input
+                                type="search"
+                                variant="label-hidden"
+                                placeholder="Search products"
+                                onchange={handleSearch}>
+                            </lightning-input>
+
+                            <!-- FILTER BUTTON -->
+                            <div class="icon-btn-wrap">
+                                <lightning-button-icon
+                                    icon-name="utility:filter"
+                                    variant="border"
+                                    alternative-text="Filter"
+                                    title="Filter"
+                                    class={filterBtnClass}
+                                    onclick={toggleFilter}>
+                                </lightning-button-icon>
+
+                                <!-- FILTER DROPDOWN -->
+                                <template if:true={showFilter}>
+                                    <div class="filter-dropdown">
+                                        <div class="filter-title">Product Qualification</div>
+
+                                        <label class="filter-option">
+                                            <input type="checkbox" checked={filterQualified}
+                                                onchange={handleFilterQualified} />
+                                            <span>Qualified Products</span>
+                                        </label>
+
+                                        <label class="filter-option">
+                                            <input type="checkbox" checked={filterDisqualified}
+                                                onchange={handleFilterDisqualified} />
+                                            <span>Disqualified Products</span>
+                                        </label>
+
+                                        <div class="filter-actions">
+                                            <lightning-button label="Clear" onclick={clearFilter}></lightning-button>
+                                            <lightning-button label="Apply" variant="brand" onclick={applyFilter}></lightning-button>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+
+                            <!-- SORT BUTTON -->
+                            <lightning-button-icon
+                                icon-name={sortIcon}
+                                variant="border"
+                                alternative-text="Sort"
+                                title={sortTitle}
+                                onclick={toggleSort}>
+                            </lightning-button-icon>
+
+                            <lightning-button
+                                label={popupLabel}
+                                onclick={openPopup}
+                                disabled={isPopupDisabled}>
+                            </lightning-button>
+
+                        </div>
+
+                    </div>
+
+                    <!-- PRODUCT LIST -->
+                    <c-product-list
+                        catalog-id={catalogId}
+                        category-id={categoryId}
+                        pricebook-id={pricebookId}
+                        search-key={searchKey}
+                        filter-applied={filterApplied}
+                        sort-order={sortOrder}
+                        onaddproduct={handleAdd}
+                        onconfigure={handleConfigure}>
+                    </c-product-list>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- POPUP (selected items preview) -->
+    <template if:true={showPopup}>
+        <div class="popup">
+
+            <div class="popup-header">
+                <span>Selected Products ({selectedProducts.length})</span>
+                <lightning-button-icon icon-name="utility:close" onclick={closePopup}>
+                </lightning-button-icon>
+            </div>
+
+            <div class="popup-body">
+
+                <template if:true={selectedProducts.length}>
+                    <template for:each={selectedProducts} for:item="p">
+                        <div key={p.productId} class="popup-row">
+                            <span>{p.name} x {p.quantity}</span>
+                            <lightning-button-icon
+                                icon-name="utility:delete"
+                                data-id={p.productId}
+                                onclick={removePopupItem}>
+                            </lightning-button-icon>
+                        </div>
+                    </template>
+                </template>
+
+                <template if:false={selectedProducts.length}>
+                    <div class="empty">No products selected</div>
+                </template>
+
+            </div>
+
+        </div>
+    </template>
+
+    <!-- CONFIGURATOR MODAL -->
+    <!-- KEY CHANGE: onsave → onconfigsave (productConfigurator now fires 'configsave') -->
+    <template if:true={showConfigurator}>
+
+        <section class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container custom-modal">
+
+                <header class="slds-modal__header">
+                    <h2>Configure {selectedProduct.name}</h2>
+                </header>
+
+                <div class="slds-modal__content content-modal">
+                    <c-product-configurator
+                        product-id={selectedProduct.productId}
+                        product-name={selectedProduct.name}
+                        record-id={opportunityId}
+                        record-type="Opportunity"
+                        product-image={selectedProduct.displayUrl}
+                        product-price={selectedProduct.price}
+                        onclose={closeConfigurator}
+                        onconfigsave={handleConfigSave}>
+                    </c-product-configurator>
+                </div>
+
+                <footer class="slds-modal__footer">
+                    <lightning-button label="Close" onclick={closeConfigurator}></lightning-button>
+                </footer>
+
+            </div>
+        </section>
+
+        <div class="slds-backdrop slds-backdrop_open"></div>
+
+    </template>
+
+</template>

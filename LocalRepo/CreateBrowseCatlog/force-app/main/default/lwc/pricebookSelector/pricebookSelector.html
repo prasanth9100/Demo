@@ -1,0 +1,33 @@
+<template>
+
+<div class="container">
+
+    <!-- CONTENT -->
+    <div class="content">
+
+        <p class="desc">
+            Select a Price Book to associate with this opportunity.
+            Changing the Price Book will remove existing products.
+        </p>
+
+        <!-- RECORD PICKER -->
+        <lightning-record-picker
+            label="Price Book"
+            placeholder="Search Price Books..."
+            object-api-name="Pricebook2"
+            value={selected}
+            onchange={handleChange}
+            display-info={displayInfo}
+            filter={filter}>
+        </lightning-record-picker>
+
+    </div>
+
+    <!-- LOADER -->
+    <template if:true={isSaving}>
+        <lightning-spinner alternative-text="Saving"></lightning-spinner>
+    </template>
+
+</div>
+
+</template>

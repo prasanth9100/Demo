@@ -1,0 +1,77 @@
+<template>
+    <div class="slds-box container">
+
+        <!-- LOADING -->
+        <template if:true={isLoading}>
+            <lightning-spinner alternative-text="Loading"></lightning-spinner>
+        </template>
+
+        <template if:false={isLoading}>
+
+            <!-- HEADER -->
+            <header class="header">
+                <h2 class="slds-text-heading_medium">{headerTitle}</h2>
+            </header>
+
+            <!-- 🔥 BODY WRAPPER (IMPORTANT) -->
+            <div class="body-wrapper">
+
+                <!-- 🔥 SCROLL AREA (KEEP THIS) -->
+                <div class="slds-scrollable_y scroll">
+
+                    <!-- PRICEBOOK -->
+                    <template if:true={showPricebookSelector}>
+                        <c-pricebook-selector data-id="pricebook" record-id={recordId} onselect={handlePricebookSelect}
+                            onselectionchange={handlePricebookChange}>
+                        </c-pricebook-selector>
+                    </template>
+
+                    <!-- FLOW -->
+                    <template if:true={showMainFlow}>
+
+                        <!-- CATALOG -->
+                        <template if:true={showCatalogs}>
+                            <c-catalog-list selected-catalog-id={catalogId} oncatalognext={handleCatalogNext} oncatalogselect={handleCatalogSelect}>
+                            </c-catalog-list>
+                        </template>
+
+                        <!-- PRODUCTS -->
+                        <template if:true={showProducts}>
+                            <c-product-browser catalog-id={catalogId} catalog-name={catalogName}
+                                pricebook-id={pricebookId} pricebook-name={pricebookName} opportunity-id={recordId} onreview={handleReview} selected-products={selectedProducts}
+                                onbackcatalog={handleBackCatalog} onproductchange={handleProductChange}>
+                            </c-product-browser>
+                        </template>
+
+                        <!-- REVIEW -->
+                        <template if:true={showReview}>
+                            <c-review-products products={selectedProducts} record-id={recordId} onback={handleBack}
+                                oncancel={handleClose} oncloseall={handleClose} onproductchange={handleProductChange}>
+                            </c-review-products>
+                        </template>
+
+                    </template>
+
+                </div>
+
+            </div>
+
+            <!-- FOOTER -->
+            <footer class="footer">
+
+                <div class="left">
+                    <lightning-button label={leftLabel} onclick={handleLeft}>
+                    </lightning-button>
+                </div>
+
+                <div class="right">
+                    <lightning-button variant="brand" label={rightLabel} onclick={handleRight} disabled={disableRight}>
+                    </lightning-button>
+                </div>
+
+            </footer>
+
+        </template>
+
+    </div>
+</template>
